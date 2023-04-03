@@ -15,6 +15,7 @@ export const useUserStore = defineStore({
     // 清除token
     clearToken() {
       this.token = ''
+      this.userInfo = ''
     }
 
   },

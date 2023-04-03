@@ -89,15 +89,30 @@ function player(params) {
         params,
     })
 }
-// 最后一次记录
 
-function recordHistory(data) {
+
+
+// 记录播放记录
+function recordHistory(params) {
     return request({
         url: '/api/course/history/recordHistory',
+        method: 'post',
         data,
 
     })
 }
+
+// 最后一次记录
+function getLastHistoryByChapterId(params) {
+    return request({
+        url: '/api/coure/history/getLastHistoryByChapterId',
+        params
+    })
+}
+
+
+
+
 
 export {
     getFirstCategorys,
@@ -111,5 +126,6 @@ export {
     courseCheckAuth,
     downloadAttachment,
     player,
-    recordHistory
+    recordHistory,
+    getLastHistoryByChapterId
 }

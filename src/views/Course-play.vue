@@ -5,7 +5,11 @@
     </div>
     <div class="play">
       <div class="play-left">
-        <vue3VideoPlay v-bind="options" @timeupdate="onTimeupdate" />
+        <vue3VideoPlay
+          v-bind="options"
+          @timeupdate="onTimeupdate"
+          @loadstart="onloadstart"
+        />
       </div>
       <div class="play-right">
         <el-tabs tab-position="right">
@@ -63,14 +67,14 @@
 </template>
 <script setup>
 // 语法糖 预处理setup()函数，每个组件实例都执行 顶层绑定自动暴露给模板
-import { useUserStore } from "../store/user.js";
+import { useUserStore } from "../store/user";
 import { ArrowLeftBold, Document } from "@element-plus/icons-vue";
 import { reactive } from "vue";
 import "vue3-video-play/dist/style.css";
 import vue3VideoPlay from "vue3-video-play";
 import { player, recordHistory } from "../utils/api/courseManage.js";
 import { onBeforeMount } from "vue";
-import { useUserStore } from "../store/user.js";
+
 let route = useRoute();
 let { courseId, chapterId } = route.params;
 // 播放课程数据
@@ -113,17 +117,31 @@ onBeforeMount(() => {
     console.log(res.data);
   }); */
 });
-// 更新播放时间
 
-const onTimeupdate = (ev) => {
-  recordHistory({
+// 开始请求视频数据
+const onloadstart = (ev) => {
+  getLastHistoryByChapterId({
+    memberId: useUserStore().userInfo.id,
+    courseId,
     chapterId,
-    courseId: "",
-    memberId: useUserStore().userInfo.id, // 会员id
-    lastTime: ev.target.currentTime,
   }).then((res) => {
-    console.log(res);
+    ev.target.currentTime = res.data.data.lastTime;
   });
+  // ev.target.currentTime =
+};
+let time = ref(0);
+// 更新播放时间
+const onTimeupdate = (ev) => {
+  time.value++;
+  if (time.vlaue >= 10) {
+    recordHistory({
+      chapterId,
+      courseId,
+      memberId: useUserStore().userInfo.id, // 会员id
+      lastTime: ev.target.currentTime,
+    });
+    time.value = 0;
+  }
 };
 </script>
 <style scoped>

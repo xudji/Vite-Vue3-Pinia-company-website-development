@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
-
+import { useUserStore } from '../store/user'
 const routes = [
   {
     path: "/",
@@ -30,6 +30,18 @@ const routes = [
     name: "Login",
     component: () =>
       import("../views/Login.vue"),
+  },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: () => import("../views/Cart.vue"),
+    beforeEnter: (to, from, next) => {
+      if (useUserStore().userInfo.id) {
+        next()
+      } else {
+        next('/login')
+      }
+    }
   },
 ];
 

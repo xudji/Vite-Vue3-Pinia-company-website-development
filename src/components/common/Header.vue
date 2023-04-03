@@ -18,7 +18,7 @@
             <search style="width: 22px; height: 22px" />
           </el-icon>
         </div>
-        <div class="content-shopping">
+        <div class="content-shopping" @click="goCart">
           <el-icon color="#808080" :size="24"
             ><shopping-cart style="width: 24px; height: 24px"
           /></el-icon>
@@ -168,6 +168,11 @@ const goLogout = () => {
         message: "已取消",
       });
     });
+};
+
+// goCart
+const goCart = () => {
+  router.push("/cart");
 };
 </script>
 
