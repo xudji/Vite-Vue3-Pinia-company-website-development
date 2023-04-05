@@ -141,7 +141,7 @@
               <router-link :to="{ path: '/course-info/' + item.id }">
                 <div class="courseInfo">
                   <div class="courseBg">
-                    <img :src="item.courseCover" />
+                    <img />
                   </div>
                   <div class="courseName">{{ item.courseName }}</div>
                   <div class="courseDegree">

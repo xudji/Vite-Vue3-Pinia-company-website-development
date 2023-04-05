@@ -5,6 +5,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 //import requireTransform from 'vite-plugin-require-transform';
 // https://vitejs.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['net']
+  },
   plugins: [
 
     vue(),

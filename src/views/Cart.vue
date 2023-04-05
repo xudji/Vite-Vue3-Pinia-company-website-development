@@ -11,7 +11,7 @@
         </div>
         <ul class="head">
           <li class="item check">
-            <el-checkbox @change="checkAll" v-model="isChecked"
+            <el-checkbox v-model="isChecked" @change="checkAll"
               >全选</el-checkbox
             >
           </li>
@@ -29,8 +29,8 @@
           >
             <li class="order-item">
               <el-checkbox
-                @change="cartStore.itemChecked(index)"
                 v-model="item.check"
+                @change="cartStore.itemChecked(index)"
               ></el-checkbox>
             </li>
             <li class="order-item info">
@@ -40,12 +40,12 @@
               <div class="course-name">{{ item.courseName }}</div>
             </li>
 
-            <li class="order-item">￥{{ item.discountPrice }}</li>
+            <li class="order-item">￥{{ item.salePrice }}</li>
             <li class="order-item num">{{ item.counter }}</li>
             <li class="order-item totoalprice">
-              ￥{{ item.counter * item.salePrice }}
+              ￥{{ item.counter * item.discountPrice }}
             </li>
-            <li class="order-item delete">
+            <li class="order-item delete" @click="del(item.id)">
               <a href="javascript:;">
                 <i class="el-icon-delete"></i>
                 <span class="deletd-text">删除</span>
@@ -54,7 +54,6 @@
           </ul>
         </div>
         <div class="noOrder" v-else>
-          <img src="/image/norder365.png" alt="" />
           <div class="order-alert">哎呦！暂无订单</div>
         </div>
         <el-divider class="line"></el-divider>
@@ -66,7 +65,7 @@
             合计<span class="unique">{{ total.price }}</span>
           </li>
           <li>
-            <button class="btn">去结算</button>
+            <button class="btn" @click="goOrder">去结算</button>
           </li>
         </ul>
       </div>
@@ -74,45 +73,86 @@
   </div>
   <Footer></Footer>
 </template>
-  
-  <script setup>
+
+<script setup>
+import { ref, onBeforeMount, toRefs, reactive } from "vue";
+import { useRouter } from "vue-router";
 //组件
 import Header from "../components/common/Header.vue";
 import Footer from "../components/common/Footer.vue";
-// api
-import { getShopCarList } from "../utils/api/cart";
-import { onBeforeMount } from "vue";
+import { getShopCarList, deleteShopCar } from "../utils/api/cart";
+import { creatToken } from "../utils/api/createToken";
+//element
+import { ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
+
 import { storeToRefs } from "pinia";
 import { useCartStore } from "../store/cart";
-let cartStore = useCartStore();
-let { cartList, isChecked, total } = storeToRefs(cartStore);
-// pinia
 
-// 生命周期
+let cartStore = useCartStore();
+let { isChecked, cartList, total } = storeToRefs(cartStore);
+
 onBeforeMount(() => {
   getShopCarList().then((res) => {
     cartStore.addCart(res.data.list);
-    console.log(res);
   });
 });
 
-// 点击选中
 const checkAll = () => {
   if (isChecked.value) {
-    // 不选
     cartStore.unAll();
   } else {
-    // 全选
     cartStore.all();
   }
 };
+
+//删除购物车数据
+const del = (id) => {
+  ElMessageBox.confirm("确定删除该课程吗？", "删除", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      creatToken().then((res) => {
+        let token = res.data.token;
+        deleteShopCar(
+          {
+            id,
+          },
+          token
+        ).then((res) => {
+          if (res.meta.code === "200") {
+            ElMessage.success({
+              message: "删除成功!",
+            });
+            getShopCarList().then((res) => {
+              cartStore.cartList = res.data.list;
+            });
+          }
+        });
+      });
+    })
+    .catch(() => {
+      ElMessage.info({
+        message: "已取消删除",
+      });
+    });
+};
+let router = useRouter();
+
+//去结算页面
+const goOrder = () => {
+  router.push("/confirmOrder");
+};
 </script>
-  <style scoped>
+<style scoped>
 .fixed {
   width: 100%;
   height: 100%;
   background: #ffffff;
 }
+
 .bgColor {
   width: 100%;
   height: 200px;
@@ -121,17 +161,21 @@ const checkAll = () => {
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
+
 .container {
   width: 1200px;
   margin: -100px auto 50px auto;
@@ -139,21 +183,25 @@ const checkAll = () => {
   border-radius: 12px;
   box-shadow: 0px 2px 5px #888888;
 }
+
 .main {
   padding: 20px;
   border-radius: 5px;
 }
+
 .main-shop {
   position: relative;
   display: flex;
   align-content: center;
 }
+
 .main-shop i {
   font-size: 35px;
   padding: 20px 10px 0 0;
   color: #ff4400;
   font-weight: bold;
 }
+
 .main-shopcart {
   width: 1200px;
   margin: 0 auto;
@@ -166,11 +214,13 @@ const checkAll = () => {
   padding: 30px 0;
   opacity: 1;
 }
+
 .nav {
   display: flex;
   justify-content: space-between;
   border-bottom: 2px solid #e6e6e6;
 }
+
 .nav .left {
   width: 80px;
   height: 26px;
@@ -182,6 +232,7 @@ const checkAll = () => {
   opacity: 1;
   border-bottom: 2px solid #ff4400;
 }
+
 .nav .right {
   width: 108px;
   height: 24px;
@@ -208,22 +259,27 @@ const checkAll = () => {
   border-radius: 5px;
   box-shadow: 0px 2px 5px 2px #cccccc;
 }
+
 .head .item {
   width: 150px;
   font-size: 14px;
   color: #333333;
 }
+
 .check .all {
   margin-right: 10px;
 }
+
 .check .text {
   width: 1487px;
   height: 40px;
 }
+
 .classInfo {
   width: 400px !important;
   color: #333333;
 }
+
 /* 头部结束 */
 
 /* 订单开始 */
@@ -236,41 +292,50 @@ const checkAll = () => {
   border-radius: 5px;
   box-shadow: 0px 2px 5px 2px #cccccc;
 }
+
 .haveorder .order-item {
   height: 200px;
   line-height: 200px;
   margin: 5px;
 }
+
 .order-item:first-child {
   width: 30px;
 }
+
 .order-item {
   width: 150px;
   font-size: 16px;
   color: #333333;
 }
+
 .totoalprice {
   color: #e2231a;
 }
+
 .num {
   width: 120px !important;
   padding-left: 15px;
 }
+
 .info {
   display: flex;
   width: 470px !important;
   height: 200px;
   line-height: 200px;
 }
+
 .courseimg {
   margin: 40px 20px 40px 0;
   width: 200px;
   height: 120px;
 }
+
 .courseimg img {
   width: 100%;
   height: 100%;
 }
+
 .info .course-name {
   width: 300px;
   word-break: keep-all;
@@ -278,9 +343,11 @@ const checkAll = () => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .delete {
   cursor: pointer;
 }
+
 .deletd-text {
   margin-left: 5px;
 }
@@ -294,6 +361,7 @@ const checkAll = () => {
   text-align: center;
   margin: 200px 0;
 }
+
 .order-alert {
   height: 31px;
   font-size: 20px;
@@ -304,6 +372,7 @@ const checkAll = () => {
   opacity: 1;
   margin: 20px 120px;
 }
+
 /* 暂无订单结束 */
 .foot {
   display: flex;
@@ -314,6 +383,7 @@ const checkAll = () => {
   color: #333333;
   margin-bottom: 10px;
 }
+
 .foot-item {
   width: 120px;
   height: 40px;
@@ -322,11 +392,13 @@ const checkAll = () => {
   font-weight: 400;
   color: #333333;
 }
+
 .unique {
   margin-left: 5px;
   font-size: 24px;
   color: #ff4400;
 }
+
 .btn {
   width: 120px;
   height: 40px;

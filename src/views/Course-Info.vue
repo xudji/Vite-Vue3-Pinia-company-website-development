@@ -66,7 +66,7 @@
           <div class="desc">该课程暂无介绍</div>
           <div class="btn">
             <button class="btn-item active">立即购买</button>
-            <button class="btn-item">加入购物车</button>
+            <button class="btn-item" @click="addCart">加入购物车</button>
           </div>
         </div>
         <div class="video" v-for="item in courseChapters" :key="item.id">
@@ -124,7 +124,9 @@ import {
   courseCheckAuth,
   downloadAttachment,
 } from "../utils/api/courseManage";
+import { addShopCar } from "../utils/api/cart";
 import { onBeforeMount, reactive } from "vue";
+import { creatToken } from "../utils/api/createToken";
 let active = ref(true);
 let courseChapters = ref([]);
 let route = useRoute();
@@ -133,6 +135,7 @@ let courseInfo = ref([]);
 let attachments = ref([]);
 const router = useRouter(); // 组合式api 一个函数
 const useStore = useUserStore();
+
 onBeforeMount(() => {
   getCourseDetail({ courseId }).then((res) => {
     courseInfo.value = res.data.data;
@@ -183,7 +186,7 @@ const downloadSource = (item) => {
   });
 };
 
-//开始学习
+// 开始学习
 const goPlay = (item, chapterId) => {
   if (!useStore.token) {
     ElMessage.info({
@@ -192,7 +195,7 @@ const goPlay = (item, chapterId) => {
     router.push("/login");
     return;
   }
-  courseCheckAuth({ courseId:item.courseId}).then((res) => {
+  courseCheckAuth({ courseId: item.courseId }).then((res) => {
     if (!res.data.data.hasAuth) {
       ElMessage.info({
         message: "购买课程才可以下载资料",
@@ -202,6 +205,23 @@ const goPlay = (item, chapterId) => {
     //有权限(路由参数用于跳转该页面时传递参数过去)
     router.push("/course-play/" + item.courseId + "/" + chapterId);
   });
+};
+
+// 加入购物车
+const addCart = () => {
+  creatToken().then((res) => {
+    let token = res.data.token;
+ 
+  addShopCar(
+    {
+      courseId,
+      memberId: useUserStore().userInfo.id,
+    },
+    token
+  ).then((res) => {
+    console.log(res);
+  });
+   });
 };
 </script>
 

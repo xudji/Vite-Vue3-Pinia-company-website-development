@@ -32,6 +32,19 @@ const routes = [
       import("../views/Login.vue"),
   },
   {
+    path: "/confirmOrder",
+    name: "confirmOrder",
+    component: () =>
+      import("../views/ConfirmOrder.vue"),
+    beforeEnter: (to, from, next) => {
+      if (useUserStore().userInfo.id) {
+        next()
+      } else {
+        next('/login')
+      }
+    }
+  },
+  {
     path: "/cart",
     name: "Cart",
     component: () => import("../views/Cart.vue"),
