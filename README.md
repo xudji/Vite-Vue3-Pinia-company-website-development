@@ -1,7 +1,48 @@
-# Vue 3 + Vite
+# Vite + Vue3 + Pinia + 官网实战 
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 项目介绍
 
-## Recommended IDE Setup
+本项目是一个官网开发项目，用于展示和推广在线教育课程。主要功能包括登录、课程视频播放、支付以及课程管理等模块，采用了 Vite + Vue3 + Pinia 技术栈进行开发。
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 功能模块
+
+#### 登录功能
+
+账号密码登录
+短信验证码登录
+
+登录滑块验证
+登录验证和导航守卫
+
+#### 课程视频播放
+
+防盗链机制
+
+内网穿透
+
+#### 支付功能
+
+微信支付
+支付宝支付
+
+#### 其他功能
+
+课程资料下载
+课程分类和排序处理物车功能
+性能优化等...
+
+## 运行
+
+  ```shell
+# 1. 进入拷贝目录下安装依赖
+npm i 
+# 2. 运行
+npm run dev
+  ```
+
+## 项目预览
+
+
+
+
+
