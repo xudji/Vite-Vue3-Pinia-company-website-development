@@ -41,7 +41,7 @@ npm run dev
   ```
 
 ## 项目预览
-
+![Image text](https://github.com/xudji/Vite-Vue3-Pinia-company-website-development/blob/main/src/assets/img/%E9%A1%B9%E7%9B%AE%E6%88%AA%E5%9B%BE.png)      
 
 
 
