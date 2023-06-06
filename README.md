@@ -40,8 +40,6 @@ npm i
 npm run dev
   ```
 
-## 项目预览
-![Image text](https://github.com/xudji/Vite-Vue3-Pinia-company-website-development/blob/main/src/assets/img/%E5%AE%98%E7%BD%91%E9%A6%96%E9%A1%B5.jpg)      
 
 
 
